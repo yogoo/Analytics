@@ -1,0 +1,11 @@
+Changelog for Analytics.
+
+Analytics 1.0.0-rc1 (February 6, 2012)
+====================================
+- Addon renamed
+- Support for _trackPageview opt. url
+
+
+Google Analytics 1.0.0-beta3 (February 5, 2012)
+====================================
+- Fix retriving properties from System Settings on empty snippet properties
