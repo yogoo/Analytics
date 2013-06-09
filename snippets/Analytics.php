@@ -50,7 +50,7 @@ if ($trackCurrentUser) {
         if (!empty($gaq['setDomainName'])) $gaqJSOptions['setDomainName'] = "['_setDomainName', '".$gaq['setDomainName']."']";
         if (!empty($gaq['setCookiePath'])) $gaqJSOptions['setCookiePath'] = "['_setCookiePath', '".$gaq['setCookiePath']."']";
 
-        $gaq_options = implode(', ', $gaqJSOptions);
+        $gaq_options = implode(',', $gaqJSOptions);
         $htmlOutput .= $modx->getChunk('googleAnalyticsTpl',array('gaq_options'=>$gaq_options));
     }
     else if ($debug) {

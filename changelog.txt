@@ -1,5 +1,10 @@
 Changelog for Analytics.
 
+Analytics 1.1.1-rc1 (June 9, 2013)
+====================================
+- Squeeze even more bits out
+
+
 Analytics 1.1.0-rc1 (March 23, 2013)
 ====================================
 - Issue #5 : Add Enhanced Link Attribution. Enable it from your GA account :
