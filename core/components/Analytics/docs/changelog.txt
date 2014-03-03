@@ -2,15 +2,19 @@ Changelog for Analytics.
 
 Analytics 1.2.0-pl (March 3, 2014)
 ====================================
-TLDR: universal analytics; multiple contexts filtering; tpl overwrite; complete rewrite
+TLDR: universal analytics; multiple contexts filtering; tpl override; complete rewrite
 
 - Issue #8: Add support for Universal Analytics (UA)
             https://developers.google.com/analytics/devguides/collection/upgrade/
 
-- New: exclude multiple contexts from being tracked with the property hideFromContexts
+- New: exclude multiple contexts from being tracked with the property excludeContextList
+- New: exclude logged in users from being tracked with the property excludeLoggedUserContextList (default to 'mgr')
 - New: overwrite the default tracking code with your own
+- New: English and French localization
 
 - Updated: documentation
+
+- Deprecation: _trackPageview; always enabled. Overwrite tpl if you need a different behavior
 
 
 Analytics 1.1.1-rc1 (June 9, 2013)
