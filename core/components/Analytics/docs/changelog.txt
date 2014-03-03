@@ -1,0 +1,35 @@
+Changelog for Analytics.
+
+Analytics 1.2.0-pl (March 3, 2014)
+====================================
+TLDR: universal analytics; multiple contexts filtering; tpl overwrite; complete rewrite
+
+- Issue #8: Add support for Universal Analytics (UA)
+            https://developers.google.com/analytics/devguides/collection/upgrade/
+
+- New: exclude multiple contexts from being tracked with the property hideFromContexts
+- New: overwrite the default tracking code with your own
+
+- Updated: documentation
+
+
+Analytics 1.1.1-rc1 (June 9, 2013)
+====================================
+- Update: squeeze even more bits out
+
+
+Analytics 1.1.0-rc1 (March 23, 2013)
+====================================
+- Issue #5: Add Enhanced Link Attribution. Enable it from your GA account :
+            https://support.google.com/analytics/bin/answer.py?hl=en&answer=2558867&topic=2558810&ctx=topic
+
+
+Analytics 1.0.0-rc1 (February 6, 2012)
+======================================
+- New: extra renamed
+- New: support for _trackPageview opt. url
+
+
+Google Analytics 1.0.0-beta3 (February 5, 2012)
+===============================================
+- Fix: retriving properties from System Settings on empty snippet properties
