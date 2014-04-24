@@ -1,20 +1,22 @@
 Changelog for Analytics.
 
-Analytics 1.2.0-pl (March 3, 2014)
+Analytics 1.2.0-pl (April 24, 2014)
 ====================================
-TLDR: universal analytics; multiple contexts filtering; tpl override; complete rewrite
+TLDR: universal analytics; multiple contexts filtering; templates override; Display Advertising features
 
-- Issue #8: Add support for Universal Analytics (UA)
+- Issue #9: Add support for Display Advertising features (displayfeatures property)
+            https://support.google.com/analytics/answer/3450482
+
+- Issue #8: Add support for Google Universal Analytics (analytics.js) - ga.js is still supported but not recommended, do migrate!
             https://developers.google.com/analytics/devguides/collection/upgrade/
+            https://developers.google.com/analytics/devguides/collection/analyticsjs/
 
-- New: exclude multiple contexts from being tracked with the property excludeContextList
-- New: exclude logged in users from being tracked with the property excludeLoggedUserContextList (default to 'mgr')
-- New: overwrite the default tracking code with your own
+- New: set a list of contexts for which to exclude logged in users from being tracked (defaults to 'mgr')
+- New: set a list of contexts for which to exclude all tracking
+- New: overwrite the default tracking codes with your own chunks
 - New: English and French localization
 
 - Updated: documentation
-
-- Deprecation: _trackPageview; always enabled. Overwrite tpl if you need a different behavior
 
 
 Analytics 1.1.1-rc1 (June 9, 2013)
@@ -25,7 +27,7 @@ Analytics 1.1.1-rc1 (June 9, 2013)
 Analytics 1.1.0-rc1 (March 23, 2013)
 ====================================
 - Issue #5: Add Enhanced Link Attribution. Enable it from your GA account :
-            https://support.google.com/analytics/bin/answer.py?hl=en&answer=2558867&topic=2558810&ctx=topic
+            https://support.google.com/analytics/answer/2558867?hl=en&topic=2558810&ctx=topic
 
 
 Analytics 1.0.0-rc1 (February 6, 2012)

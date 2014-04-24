@@ -1,35 +1,38 @@
 <?php
 /**
+ * Analytics
+ *
+ * Copyright 2014 by Jerome Perrin <hello@jeromeperrin.com>
+ *
+ * This file is part of Analytics, a utility tool for MODX Revolution.
+ *
+ * Analytics is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ *
+ * Analytics is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Analytics; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+ * Suite 330, Boston, MA 02111-1307 USA
+ *
  * @package Analytics
  */
-
-// bool   debug
-// string excludeContextList (comma separated list of contexts => mgr,web,custom)
-// string excludeLoggedUserContextList (comma separated list of contexts => mgr,web,custom)
-
-
-## UA
-// string webPropertyID => UA-XXXX-Y
-// bool isLocalhost => set cookie domain to none
-// string cookieDomain => Cookie Domain Configuration => auto||none||domain.tld - default = auto
-// string cookiePath => Subdirectory Tracking
-// bool forceSSL => force Google Analytics to always send data using SSL even from insecure pages
-// bool enhancedLinkAttribution => enable enhanced link attribution
-// bool anonymizeIP => anonymize the IP addresses for all the hits sent from a page
-
-## GA
-// string setAccount => UA-XXXX-Y
-// string setDomainName
-// string setCookiePath
-// bool   enhancedLinkAttribution
-// string trackPageview  //enabled by default and deprecated as of 1.2.0-pl
 
 class Analytics {
 
   public $modx;
   public $config = array();
 
-
+  /**
+   * The Analytics constructor.
+   *
+   * @param modX $modx A reference to the modX constructor.
+   * @param array $config A configuration array.
+   */
   function __construct(modX &$modx, array $config = array()) {
 
     $this->modx =& $modx;
@@ -40,48 +43,64 @@ class Analytics {
       'core_path' => $basePath,
       'model_path' => $basePath.'model/',
       'elements_path' => $basePath.'elements/',
+      'universalAnalyticsTpl' => 'ua_tracking',
+      'googleAnalyticsTpl' => 'ga_tracking',
     ), $config);
-
-    if (empty($this->config['universalAnalyticsTpl'])) $this->config['universalAnalyticsTpl'] = 'ua_tracking';
-    if (empty($this->config['googleAnalyticsTpl'])) $this->config['googleAnalyticsTpl'] = 'ga_racking';
   }
+
 
   /**
    *
+   * Returns the tracking codes as html depending on the current context and user's session(s).
    * @access public
+   * @return string Returns the tracking codes as html depending on the current context and user's session(s).
    *
    */
   public function run(){
     $output = '';
     $d_output = '';
 
-    # Should we track? filter by context
+    ## no tracking ID provided, return
     if ( empty($this->config['webPropertyID']) && empty($this->config['setAccount']) ) {
-      $track = false;
-      if ($this->config['debug']) $d_output .= '// Whoops, did you forget to set your tracking ID?'."\n";
-    } else {
-      if (!$this->track()) { # Don't track
-        if ($this->config['debug']) $d_output .= '// Do not track';
-      } else { # Track
+      if ($this->config['debug']) {
+        $d_output .= '// Whoops, did you forget to set an analytics tracking ID? If not, set debug to false to remove this message.';
+        return $this->wrapJSDebugOutput($d_output)."\n".$output;
+      }
+      return $output;
+    }
+
+    # should we track?
+    if (!$this->track()) { ## dont track
+      if ($this->config['debug']) {
+        $d_output .= '// Do not track';
+        return $this->wrapJSDebugOutput($d_output)."\n".$output;
+      }
+      return $output;
+    } else { ## track
+      # UA (analytics.js)
+      if (!empty($this->config['webPropertyID'])) {
+        if ($this->config['debug']) $d_output .= '// Track with Universal Analytics';
         $output .= $this->generateUATrackingCode();
+      }
+
+      # GA (ga.js)
+      if (!empty($this->config['setAccount'])) {
+        if ($this->config['debug']) $d_output .= '// Track with Google Analytics';
         $output .= $this->generateGATrackingCode();
-        if ($this->config['debug']) $d_output .= '// Do track';
       }
     }
 
-
-    # return the resulting tracking code or debug output
-    if ($this->config['debug']) $output = '<script>'.$d_output.'</script>'."\n".$output;
+    ## return
+    if ($this->config['debug']) $output = $this->wrapJSDebugOutput($d_output)."\n".$output;
     return $output;
   }
 
 
   /**
-   * Returns the status of tracking depending of the current context and user's session(s)
+   * Check wether we should track or not based on the current context and user's session(s)
    *
-   * @author Jerome Perrin
    * @access private
-   * @return bool Returns the status of tracking depending of the current context and user's session(s)
+   * @return bool Returns the status of tracking depending on the current context and user's session(s).
    */
   private function track() {
     $currentContext = $this->modx->context->get('key');
@@ -95,10 +114,10 @@ class Analytics {
 
     # track logged in user?
     $trackLoggedUser = true;
-    if (!empty($this->config['excludeLoggedUserContextList'])) {
-      $excludeLoggedUserContexts = explode(',', $this->sanitizeList($this->config['excludeLoggedUserContextList']));
+    if (!empty($this->config['excludeLoggedInUserContextList'])) {
+      $excludeLoggedUserContexts = explode(',', $this->sanitizeList($this->config['excludeLoggedInUserContextList']));
       if ($this->modx->user instanceof modUser) {
-        $userSessionContexts = array_keys($this->modx->user->getSessionContexts()); // array("mgr" => 1) => array("mgr")
+        $userSessionContexts = array_keys($this->modx->user->getSessionContexts()); // array("mgr" => 1) ==> array("mgr")
         # check each session context against each excludeContext
         foreach ($userSessionContexts as $sessionContext) {
           if (in_array($sessionContext, $excludeLoggedUserContexts)) {
@@ -114,83 +133,90 @@ class Analytics {
 
 
   /**
-   * Returns the Universal Analytics tracking code based on current config.
+   * Generates a Universal Analytics tracking code (analytics.js).
    *
-   * @author Jerome Perrin
    * @access private
    * @return bool Returns the Universal Analytics tracking code based on current config
    */
   private function generateUATrackingCode() {
-    // string webPropertyID
-    // bool isLocalhost
-    // string cookieDomain => auto||none||domain.tld - default = auto
-    // string cookiePath
-    // bool forceSSL
-    // bool enhancedLinkAttribution
-    // bool anonymizeIP
+    # string webPropertyID
+    # bool isLocalhost
+    # string cookieDomain => auto||none||domain.tld - default = auto
+    # string cookiePath
+    # bool forceSSL
+    # bool enhancedLinkAttribution
+    # bool anonymizeIP
+    # string pagePath
+    # bool displayfeatures
 
-    // [[+gua_options]]
+    # [[+ua_options]]
+    $ua_options = array();
 
-    if ($this->config['universalAnalyticsTpl'] != 'ua_tracking') {
-      # pass the webPropertyID to the user's provided chunk (override the default chunk)
-      $gua_options = array('gua_options' => $this->config['webPropertyID']);
-    } else {
-      # create a UA tracker
-      #   ga('create', 'UA-XXXXX-X', 'auto');
-      #   ga('create', 'UA-XXXXX-X', 'domain.tld');
-      #   ga('create', 'UA-XXXXX-X', 'auto||none||domain.tld');
-      #   ga('create', 'UA-XXXXX-X', {'cookieDomain': 'none', 'cookiePath': '/path/'});
-      $UAtracker = '';
+    # create a UA tracker
+    #   ga('create', 'UA-XXXXX-X', 'auto');
+    #   ga('create', 'UA-XXXXX-X', 'domain.tld');
+    #   ga('create', 'UA-XXXXX-X', 'auto||none||domain.tld');
+    #   ga('create', 'UA-XXXXX-X', {'cookieDomain': 'none', 'cookiePath': '/path/'});
+    $UAtracker = '';
 
-      if (empty($this->config['cookieDomain']) && !$this->config['isLocalhost']) {
-        $this->config['cookieDomain'] = 'auto';
-      } else if ($this->config['isLocalhost']) {
-        $this->config['cookieDomain'] = 'none';
-      }
-
-      if (!empty($this->config['cookiePath'])) {
-        $cookieProps = "{'cookieDomain':'".$this->config['cookieDomain']."','cookiePath':'".$this->config['cookiePath']."'}";
-      } else {
-        $cookieProps = "'".$this->config['cookieDomain']."'";
-      }
-
-      $UAtracker .= "ga('create','".$this->config['webPropertyID']."',".$cookieProps.");";
-      unset($cookieProps);
-
-
-      if ($this->config['forceSSL']) $UAtracker.= "ga('set','forceSSL',true);";
-      if ($this->config['enhancedLinkAttribution']) $UAtracker.= "ga('require','linkid','linkid.js'};";
-      if ($this->config['anonymizeIP']) $UAtracker.= "ga('set','anonymizeIp',true);";
-
-      $gua_options = array('gua_options' => $UAtracker);
+    if (empty($this->config['cookieDomain']) && !$this->config['isLocalhost']) {
+      $this->config['cookieDomain'] = 'auto';
+    } else if ($this->config['isLocalhost']) {
+      $this->config['cookieDomain'] = 'none';
     }
 
-    return $this->getChunk('universalAnalyticsTpl',$gua_options);
+    if (!empty($this->config['cookiePath'])) {
+      $cookieProps = "{'cookieDomain':'".$this->config['cookieDomain']."','cookiePath':'".$this->config['cookiePath']."'}";
+    } else {
+      $cookieProps = "'".$this->config['cookieDomain']."'";
+    }
+
+    $UAtracker .= "ga('create','".$this->config['webPropertyID']."',".$cookieProps.");";
+    unset($cookieProps);
+    $UAtracker .= empty($this->config['pagePath']) ? "ga('send','pageview');" : "ga('send','pageview','".$this->config['pagePath']."');";
+
+    if ($this->config['forceSSL']) $UAtracker.= "ga('set','forceSSL',true);";
+    if ($this->config['enhancedLinkAttribution']) $UAtracker.= "ga('require','linkid','linkid.js'};";
+    if ($this->config['anonymizeIP']) $UAtracker.= "ga('set','anonymizeIp',true);";
+    if ($this->config['displayfeatures']) $UAtracker.= "ga('require','displayfeatures');";
+
+    $ua_options['ua_options'] = $UAtracker;
+    return $this->getChunk('universalAnalyticsTpl',$ua_options);
   }
 
 
   /**
-   * Returns the Google Analytics tracking code based on current config.
+   * Generates a Google Analytics tracking code (ga.js).
    *
-   * @author Jerome Perrin
    * @access private
    * @return bool Returns the Google Analytics tracking code based on current config
    */
   private function generateGATrackingCode() {
-    // string setAccount => UA-XXXX-Y
-    // string setDomainName
-    // string setCookiePath
-    // bool   enhancedLinkAttribution
-    // string trackPageview  //enabled by default and deprecated as of 1.2.0-pl
+    # string setAccount => UA-XXXX-Y
+    # string setDomainName
+    # string setCookiePath
+    # bool   enhancedLinkAttribution
+    # string trackPageview
 
-    # [[+gua_options]]
+    # [[+ga_options]]
+    $ga_options = array();
 
+    # create a GA tracker
+    $GAtracker = '';
+
+    if ($this->config['enhancedLinkAttribution']) $GAtracker .= "['_require','inpage_linkid',p],";
+    $GAtracker .= "['_setAccount','".$this->config['setAccount']."'],";
+    $GAtracker .= empty($this->config['trackPageview']) ? "['_trackPageview']" : "['_trackPageview', '".$this->config['trackPageview']."']";
+    if (!empty($this->config['setDomainName'])) $GAtracker .= ",['_setDomainName','".$this->config['setDomainName']."']";
+    if (!empty($this->config['setCookiePath'])) $GAtracker .= ",['_setCookiePath','".$this->config['setCookiePath']."']";
+
+    $ga_options['ga_options'] = $GAtracker;
+    return $this->getChunk('googleAnalyticsTpl',$ga_options);
   }
 
 
-
   /**
-   * Returns the input string with all white space stripped out.
+   * Strips out all white space from a string
    *
    * @access private
    * @param string $string The input string.
@@ -202,54 +228,66 @@ class Analytics {
 
 
   /**
-     * Gets a Chunk and caches it; also falls back to file-based templates
-     * for easier debugging.
-     *
-     * @author Shaun McCormick
-     * @access public
-     * @param string $name The name of the Chunk
-     * @param array $properties The properties for the Chunk
-     * @return string The processed content of the Chunk
-     */
-    public function getChunk($name,$properties = array()) {
-        $chunk = null;
-        if (!isset($this->chunks[$name])) {
-            $chunk = $this->modx->getObject('modChunk',array('name' => $this->config[$name]),true);
-            if ($chunk == false) {
-                $chunk = $this->_getTplChunk($this->config[$name]);
-                if ($chunk == false) return false;
-            }
-            $this->chunks[$name] = $chunk->getContent();
-        } else {
-            $o = $this->chunks[$name];
-            $chunk = $this->modx->newObject('modChunk');
-            $chunk->setContent($o);
-        }
-        $chunk->setCacheable(false);
-        return $chunk->process($properties);
-    }
+   * Returns the javascript input string wrapped into an html script tag.
+   *
+   * @access private
+   * @param string $d_output The input debug output as javascript code.
+   * @return string Returns the javascript input string wrapped into an html script tag.
+   */
+  private function wrapJSDebugOutput($d_output) {
+    return '<script>'.$d_output.'</script>';
+  }
 
-    /**
-     * Returns a modChunk object from a template file.
-     *
-     * @author Shaun McCormick
-     * @access private
-     * @param string $name The name of the Chunk. Will parse to name.chunk.tpl
-     * @param string $postFix The postfix to append to the name
-     * @return modChunk/boolean Returns the modChunk object if found, otherwise
-     * false.
-     */
-    private function _getTplChunk($name,$postFix = '.chunk.tpl') {
-        $chunk = false;
-        $f = $this->config['elements_path'].'chunks/'.strtolower($name).$postFix;
-        if (file_exists($f)) {
-            $o = file_get_contents($f);
-            /* @var modChunk $chunk */
-            $chunk = $this->modx->newObject('modChunk');
-            $chunk->set('name',$name);
-            $chunk->setContent($o);
-        }
-        return $chunk;
+
+  /**
+   * Gets a Chunk and caches it; also falls back to file-based templates
+   * for easier debugging.
+   *
+   * @access public
+   * @param string $name The name of the Chunk
+   * @param array $properties The properties for the Chunk
+   * @return string The processed content of the Chunk
+   * @author Shaun McCormick
+   */
+  public function getChunk($name,$properties = array()) {
+    $chunk = null;
+    if (!isset($this->chunks[$name])) {
+      $chunk = $this->modx->getObject('modChunk',array('name' => $this->config[$name]),true);
+      if ($chunk == false) {
+        $chunk = $this->_getTplChunk($this->config[$name]);
+        if ($chunk == false) return false;
+      }
+      $this->chunks[$name] = $chunk->getContent();
+    } else {
+      $o = $this->chunks[$name];
+      $chunk = $this->modx->newObject('modChunk');
+      $chunk->setContent($o);
     }
+    $chunk->setCacheable(false);
+    return $chunk->process($properties);
+  }
+
+
+  /**
+   * Returns a modChunk object from a template file.
+   *
+   * @access private
+   * @param string $name The name of the Chunk. Will parse to name.chunk.tpl
+   * @param string $postFix The postfix to append to the name
+   * @return modChunk/boolean Returns the modChunk object if found, otherwise false.
+   * @author Shaun McCormick
+   */
+  private function _getTplChunk($name,$postFix = '.chunk.tpl') {
+    $chunk = false;
+    $f = $this->config['elements_path'].'chunks/'.strtolower($name).$postFix;
+    if (file_exists($f)) {
+      $o = file_get_contents($f);
+      /* @var modChunk $chunk */
+      $chunk = $this->modx->newObject('modChunk');
+      $chunk->set('name',$name);
+      $chunk->setContent($o);
+    }
+    return $chunk;
+  }
 
 }

@@ -1,17 +1,21 @@
 --------------------
-Snippet: Analytics
+Analytics
 --------------------
+Version 1.2.0-pl
 Author: Jérôme Perrin <hello@jeromeperrin.com>
-License: GPL GNU v2
+--------------------
 
-Embed Google Analytics (GA) and/or Google Universal Analytics (UA) tracking code on your site's page. It will ignore traffic from users logged into the manager or from any context name you want. You can also override the default tracking code with your own to fit your need.
+Analytics is a utility tool for MODX Revolution that will embed Google Universal Analytics (analytics.js) and/or Google Analytics (ga.js) on your website's pages. It will ignore traffic from users logged into the manager by default and from any other context(s) you set. The default tracking code templates can be replaced by your own.
 
-Example calls:
+Basic example calls:
 [[!Analytics? &webPropertyID=`UA-XXXXX-Y`]]
 [[!Analytics? &webPropertyID=`UA-XXXXX-Y` &setAccount=`UA-XXXXX-Y`]]
 
 Documentation:
-http://rtfm.modx.com/display/ADDON/Analytics
+http://rtfm.modx.com/extras/revo/analytics
+https://developers.google.com/analytics/devguides/collection/upgrade/
+https://developers.google.com/analytics/devguides/collection/analyticsjs/
+https://developers.google.com/analytics/devguides/collection/gajs/
 
 Bugs & Features on Github:
 https://github.com/yogoo/Analytics/issues
