@@ -27,7 +27,7 @@
 # shared
 $_lang['analytics.prop_desc.debug'] = 'Output debug messages? Debug messages are output before the tracking code and within a single html script tag.';
 $_lang['analytics.prop_desc.isLocalhost'] = 'UA - Running on a localhost? This will set cookieDomain to "none"';
-$_lang['analytics.prop_desc.excludeContextList'] = 'Comma separated list of contexts to exclude from tracking - default: '' - Ex: web, web2,...';
+$_lang['analytics.prop_desc.excludeContextList'] = 'Comma separated list of contexts to exclude from tracking - default: \'\' - Ex: web, web2,...';
 $_lang['analytics.prop_desc.excludeLoggedInUserContextList'] = 'Comma separated list of contexts to exclude from tracking when users are logged in - default: \'mgr\' - Ex: mgr, web,...';
 $_lang['analytics.prop_desc.enhancedLinkAttribution'] = 'UA+GA - Enable In-Page Analytics?';
 
@@ -38,8 +38,10 @@ $_lang['analytics.prop_desc.cookiePath'] = 'UA - Cookie path for subdirectory tr
 $_lang['analytics.prop_desc.forceSSL'] = 'UA - Force Google Analytics to always send data using SSL, even from insecure pages (http)?';
 $_lang['analytics.prop_desc.anonymizeIP'] = 'UA - Anonymize the IP addresses for all the hits sent from a page.';
 $_lang['analytics.prop_desc.displayfeatures'] = 'UA - Display Advertising features.';
+$_lang['analytics.prop_desc.pagePath'] = 'UA - pageview\'s page path';
 
 # Google Analytics
 $_lang['analytics.prop_desc.setAccount'] = 'GA - Your tracking ID.';
 $_lang['analytics.prop_desc.setDomainName'] = 'GA - Cookie domain.';
 $_lang['analytics.prop_desc.setCookiePath'] = 'GA - Cookie path.';
+$_lang['analytics.prop_desc.trackPageview'] = 'GA - pageview\'s page path';

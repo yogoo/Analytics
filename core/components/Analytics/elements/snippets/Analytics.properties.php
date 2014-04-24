@@ -119,7 +119,7 @@ $properties = array(
         'desc' => 'analytics.prop_desc.displayfeatures',
         'type' => 'combo-boolean',
         'options' => '',
-        'value' => false,
+        'value' => true,
         'lexicon' => PKG_NAME_LOWER . ':properties',
     ),
 

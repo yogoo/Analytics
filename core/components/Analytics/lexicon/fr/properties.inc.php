@@ -27,7 +27,7 @@
 # shared
 $_lang['analytics.prop_desc.debug'] = 'Afficher les messages d\'erreur? Les messages d\'erreur se trouvent avant le code de suivi et dans une balise html script.';
 $_lang['analytics.prop_desc.isLocalhost'] = 'UA - Le serveur est un serveur local ? Règle "cookieDomain" sur "none".';
-$_lang['analytics.prop_desc.excludeContextList'] = 'Liste de contextes à exclure des statistiques - valeur par défaut: '' - Ex: web, web2,...';
+$_lang['analytics.prop_desc.excludeContextList'] = 'Liste de contextes à exclure des statistiques - valeur par défaut: \'\' - Ex: web, web2,...';
 $_lang['analytics.prop_desc.excludeLoggedInUserContextList'] = 'Liste de contextes à exlure des statistiques quand l\'utilisateur a une session active dans ce contexte - valeur par défaut: \'mgr\' -  Ex: mgr, web,...';
 $_lang['analytics.prop_desc.enhancedLinkAttribution'] = 'UA+GA - Activer le suivi "In-Page" ?';
 
@@ -38,8 +38,10 @@ $_lang['analytics.prop_desc.cookiePath'] = 'UA - Chemin du cookie pour la suivi 
 $_lang['analytics.prop_desc.forceSSL'] = 'UA - Forcer Google Analytics a toujours envoyer les données en utilisant SSL, même depuis une page non sécurisée (http)?';
 $_lang['analytics.prop_desc.anonymizeIP'] = 'UA - Anonymiser l\'adresse IP pour tous les "hits" envoyés?';
 $_lang['analytics.prop_desc.displayfeatures'] = 'UA - Display Advertising features.';
+$_lang['analytics.prop_desc.pagePath'] = 'UA - pageview\'s page path';
 
 # Google Analytics
 $_lang['analytics.prop_desc.setAccount'] = 'GA - Code de suivi.';
 $_lang['analytics.prop_desc.setDomainName'] = 'GA - Domaine du cookie.';
 $_lang['analytics.prop_desc.setCookiePath'] = 'GA - Chemin du cookie.';
+$_lang['analytics.prop_desc.trackPageview'] = 'GA - pageview\'s page path';
