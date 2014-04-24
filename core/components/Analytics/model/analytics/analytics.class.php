@@ -56,7 +56,7 @@ class Analytics {
    * @return string Returns the tracking codes as html depending on the current context and user's session(s).
    *
    */
-  public function run(){
+  public function buildAndReturnTrackingCode(){
     $output = '';
     $d_output = '';
 

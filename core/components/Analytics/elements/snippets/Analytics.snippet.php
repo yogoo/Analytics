@@ -26,6 +26,6 @@ $analyticsCorePath = $modx->getOption('analytics.core_path',null,$modx->getOptio
 $Analytics = $modx->getService('analytics','Analytics',$analyticsCorePath.'model/analytics/',$scriptProperties);
 if (!($Analytics instanceof Analytics)) return $modx->lexicon('analytics.error.loadingclass',array('path' => $analyticsCorePath.'model/analytics/'));
 
-$result = $Analytics->run();
+$result = $Analytics->buildAndReturnTrackingCode();
 unset($Analytics);
 return $result;
