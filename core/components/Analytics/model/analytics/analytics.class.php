@@ -31,7 +31,7 @@ class Analytics {
    * The Analytics constructor.
    *
    * @param modX $modx A reference to the modX constructor.
-   * @param array $config A configuration array.
+   * @param array $config Holds the configuration values.
    */
   function __construct(modX &$modx, array $config = array()) {
 
@@ -51,9 +51,9 @@ class Analytics {
 
   /**
    *
-   * Returns the tracking codes as html depending on the current context and user's session(s).
+   * Build and returns the tracking codes as html/js.
    * @access public
-   * @return string Returns the tracking codes as html depending on the current context and user's session(s).
+   * @return string Returns the tracking codes as html/js.
    *
    */
   public function buildAndReturnTrackingCode(){
@@ -64,7 +64,7 @@ class Analytics {
     if ( empty($this->config['webPropertyID']) && empty($this->config['setAccount']) ) {
       if ($this->config['debug']) {
         $d_output .= '// Whoops, did you forget to set an analytics tracking ID? If not, set debug to false to remove this message.';
-        return $this->wrapJSDebugOutput($d_output)."\n".$output;
+        return $this->wrapIntoHTMLScriptTag($d_output)."\n".$output;
       }
       return $output;
     }
@@ -73,7 +73,7 @@ class Analytics {
     if (!$this->track()) { ## dont track
       if ($this->config['debug']) {
         $d_output .= '// Do not track';
-        return $this->wrapJSDebugOutput($d_output)."\n".$output;
+        return $this->wrapIntoHTMLScriptTag($d_output)."\n".$output;
       }
       return $output;
     } else { ## track
@@ -91,7 +91,7 @@ class Analytics {
     }
 
     ## return
-    if ($this->config['debug']) $output = $this->wrapJSDebugOutput($d_output)."\n".$output;
+    if ($this->config['debug']) $output = $this->wrapIntoHTMLScriptTag($d_output)."\n".$output;
     return $output;
   }
 
@@ -108,14 +108,14 @@ class Analytics {
     # track current context?
     $trackCurrentContext = true;
     if (!empty($this->config['excludeContextList'])) {
-      $excludeContexts = explode(',', $this->sanitizeList($this->config['excludeContextList']));
+      $excludeContexts = explode(',', $this->stripWhitespace($this->config['excludeContextList']));
       $trackCurrentContext = !in_array($currentContext, $excludeContexts, true);
     }
 
     # track logged in user?
     $trackLoggedUser = true;
     if (!empty($this->config['excludeLoggedInUserContextList'])) {
-      $excludeLoggedUserContexts = explode(',', $this->sanitizeList($this->config['excludeLoggedInUserContextList']));
+      $excludeLoggedUserContexts = explode(',', $this->stripWhitespace($this->config['excludeLoggedInUserContextList']));
       if ($this->modx->user instanceof modUser) {
         $userSessionContexts = array_keys($this->modx->user->getSessionContexts()); // array("mgr" => 1) ==> array("mgr")
         # check each session context against each excludeContext
@@ -216,26 +216,26 @@ class Analytics {
 
 
   /**
-   * Strips out all white space from a string
+   * Strips out all white space from a string.
    *
    * @access private
-   * @param string $string The input string.
+   * @param string $string A string to clean up.
    * @return string Returns the input string with all white space stripped out.
    */
-  private function sanitizeList($string) {
+  private function stripWhitespace($string) {
     return preg_replace( '/\s+/', '', $string);
   }
 
 
   /**
-   * Returns the javascript input string wrapped into an html script tag.
+   * Wraps a javascript string into an html script tag.
    *
    * @access private
-   * @param string $d_output The input debug output as javascript code.
-   * @return string Returns the javascript input string wrapped into an html script tag.
+   * @param string $js_string The javascript string.
+   * @return string Returns the javascript string wrapped into an html script tag.
    */
-  private function wrapJSDebugOutput($d_output) {
-    return '<script>'.$d_output.'</script>';
+  private function wrapIntoHTMLScriptTag($js_string) {
+    return '<script>'.$js_string.'</script>';
   }
 
 
@@ -244,9 +244,9 @@ class Analytics {
    * for easier debugging.
    *
    * @access public
-   * @param string $name The name of the Chunk
-   * @param array $properties The properties for the Chunk
-   * @return string The processed content of the Chunk
+   * @param string $name The name of the Chunk.
+   * @param array $properties The properties for the Chunk.
+   * @return string Returns the processed content of the Chunk.
    * @author Shaun McCormick
    */
   public function getChunk($name,$properties = array()) {
@@ -273,7 +273,7 @@ class Analytics {
    *
    * @access private
    * @param string $name The name of the Chunk. Will parse to name.chunk.tpl
-   * @param string $postFix The postfix to append to the name
+   * @param string $postFix The postfix to append to the name.
    * @return modChunk/boolean Returns the modChunk object if found, otherwise false.
    * @author Shaun McCormick
    */
