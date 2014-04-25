@@ -4,7 +4,7 @@ Analytics 1.2.0-pl (April 24, 2014)
 ====================================
 TLDR: universal analytics; multiple contexts filtering; templates override; Display Advertising features
 
-- Issue #9: Add support for Display Advertising features (displayfeatures property)
+- Issue #9: Add support for Display Advertising features (displayfeatures property) with Universal Analytics
             https://support.google.com/analytics/answer/3450482
 
 - Issue #8: Add support for Google Universal Analytics (analytics.js) - ga.js is still supported but not recommended, do migrate!
@@ -13,7 +13,7 @@ TLDR: universal analytics; multiple contexts filtering; templates override; Disp
 
 - New: set a list of contexts for which to exclude logged in users from being tracked (defaults to 'mgr')
 - New: set a list of contexts for which to exclude all tracking
-- New: overwrite the default tracking codes with your own chunks
+- New: overwrite the default tracking codes with your own chunks. Name them "ua_tracking" and "ga_tracking".
 - New: English and French localization
 
 - Updated: documentation

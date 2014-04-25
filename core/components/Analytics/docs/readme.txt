@@ -5,7 +5,11 @@ Version 1.2.0-pl
 Author: Jérôme Perrin <hello@jeromeperrin.com>
 --------------------
 
-Analytics is a utility tool for MODX Revolution that will embed Google Universal Analytics (analytics.js) and/or Google Analytics (ga.js) on your website's pages. It will ignore traffic from users logged into the manager by default and from any other context(s) you set. The default tracking code templates can be replaced by your own.
+Analytics is a utility tool for MODX Revolution to embed Google Universal Analytics (analytics.js) and/or Google Analytics (ga.js)
+on your website's pages while ignoring traffic from set contexts and logged-in users.
+By default it will ignore traffic from users logged into the manager.
+
+You can also overwrite the tracking code templates.
 
 Basic example calls:
 [[!Analytics? &webPropertyID=`UA-XXXXX-Y`]]
