@@ -3,6 +3,9 @@ Changelog for Analytics.
 Analytics 1.2.0-pl (April 24, 2014)
 ====================================
 TLDR: universal analytics; multiple contexts filtering; templates override; Display Advertising features
+      check you code works as expected after updating
+
+- Deprecation: system settings are deprecated in favor of properties sets.
 
 - Issue #9: Add support for Display Advertising features (displayfeatures property) with Universal Analytics
             https://support.google.com/analytics/answer/3450482
