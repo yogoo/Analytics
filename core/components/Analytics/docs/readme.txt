@@ -9,7 +9,7 @@ Analytics is a utility tool for MODX Revolution to embed Google Universal Analyt
 on your website's pages while ignoring traffic from set contexts and logged-in users.
 By default it will ignore traffic from users logged into the manager.
 
-You can also overwrite the tracking code templates.
+You can also overwrite the tracking code templates with your own chunks. Name them "ua_tracking" and "ga_tracking".
 
 Basic example calls:
 [[!Analytics? &webPropertyID=`UA-XXXXX-Y`]]
