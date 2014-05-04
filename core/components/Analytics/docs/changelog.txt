@@ -1,6 +1,6 @@
 Changelog for Analytics.
 
-Analytics 1.2.0-pl (April 24, 2014)
+Analytics 2.0.0-pl (May 4, 2014)
 ====================================
 TLDR: universal analytics; multiple contexts filtering; templates override; Display Advertising features
       check you code works as expected after updating
