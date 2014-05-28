@@ -176,7 +176,7 @@ class Analytics {
     $UAtracker .= empty($this->config['pagePath']) ? "ga('send','pageview');" : "ga('send','pageview','".$this->config['pagePath']."');";
 
     if ($this->config['forceSSL']) $UAtracker.= "ga('set','forceSSL',true);";
-    if ($this->config['enhancedLinkAttribution']) $UAtracker.= "ga('require','linkid','linkid.js'};";
+    if ($this->config['enhancedLinkAttribution']) $UAtracker.= "ga('require','linkid','linkid.js');";
     if ($this->config['anonymizeIP']) $UAtracker.= "ga('set','anonymizeIp',true);";
     if ($this->config['displayfeatures']) $UAtracker.= "ga('require','displayfeatures');";
 

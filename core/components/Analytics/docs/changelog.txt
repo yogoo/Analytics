@@ -1,5 +1,10 @@
 Changelog for Analytics.
 
+Analytics 2.0.1-pl (May 28, 2014)
+====================================
+- Fix issue #11: closing curly bracket should be regular bracket in analytics.class.php(179)
+
+
 Analytics 2.0.0-pl (May 4, 2014)
 ====================================
 TLDR: universal analytics; multiple contexts filtering; templates override; Display Advertising features

@@ -1,7 +1,7 @@
 --------------------
 Analytics
 --------------------
-Version 2.0.0-pl
+Version 2.0.1-pl
 Author: Jérôme Perrin <hello@jeromeperrin.com>
 --------------------
 
